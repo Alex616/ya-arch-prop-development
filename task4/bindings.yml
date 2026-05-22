@@ -1,0 +1,243 @@
+---
+# Разработчики — domain-developer ограничен своим namespace через RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dev-sales-binding
+  namespace: sales
+subjects:
+  - kind: User
+    name: dev-sales
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: domain-developer
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dev-housing-binding
+  namespace: housing
+subjects:
+  - kind: User
+    name: dev-housing
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: domain-developer
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dev-finance-binding
+  namespace: finance
+subjects:
+  - kind: User
+    name: dev-finance
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: domain-developer
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dev-data-binding
+  namespace: data
+subjects:
+  - kind: User
+    name: dev-data
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: domain-developer
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Инженеры эксплуатации — domain-readonly в своём namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ops-sales-binding
+  namespace: sales
+subjects:
+  - kind: User
+    name: ops-sales
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: domain-readonly
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ops-housing-binding
+  namespace: housing
+subjects:
+  - kind: User
+    name: ops-housing
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: domain-readonly
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ops-finance-binding
+  namespace: finance
+subjects:
+  - kind: User
+    name: ops-finance
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: domain-readonly
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ops-data-binding
+  namespace: data
+subjects:
+  - kind: User
+    name: ops-data
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: domain-readonly
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Владельцы продуктов — domain-readonly в своём namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: po-sales-binding
+  namespace: sales
+subjects:
+  - kind: User
+    name: po-sales
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: domain-readonly
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: po-housing-binding
+  namespace: housing
+subjects:
+  - kind: User
+    name: po-housing
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: domain-readonly
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: po-finance-binding
+  namespace: finance
+subjects:
+  - kind: User
+    name: po-finance
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: domain-readonly
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: po-data-binding
+  namespace: data
+subjects:
+  - kind: User
+    name: po-data
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: domain-readonly
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# DevOps — ClusterRoleBinding (все namespace)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: devops-binding
+subjects:
+  - kind: User
+    name: devops
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: devops-engineer
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Специалист по ИБ — ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: security-binding
+subjects:
+  - kind: User
+    name: security
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: security-officer
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Партнёрский сервисный аккаунт
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: partner-smart-home-binding
+  namespace: integrations
+subjects:
+  - kind: ServiceAccount
+    name: partner-smart-home
+    namespace: integrations
+roleRef:
+  kind: Role
+  name: partner-smart-home
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Ведущий DevOps — cluster-admin
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: devops-lead-binding
+subjects:
+  - kind: User
+    name: devops-lead
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
