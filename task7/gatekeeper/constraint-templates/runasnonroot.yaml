@@ -1,0 +1,55 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8spsprunasnonroot
+  annotations:
+    description: "Требует запуск контейнеров от непривилегированного пользователя"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPSPRunAsNonRoot
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            exemptImages:
+              description: "Список образов, исключенных из проверки"
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spsprunasnonroot
+
+        violation[{"msg": msg, "details": {}}] {
+            c := input_containers[_]
+            not container_runs_as_nonroot(c)
+            not pod_runs_as_nonroot
+            msg := sprintf("Контейнер %v должен запускаться от непривилегированного пользователя (runAsNonRoot: true)", [c.name])
+        }
+
+        container_runs_as_nonroot(container) {
+            container.securityContext.runAsNonRoot
+        }
+
+        container_runs_as_root(container) {
+            container.securityContext.runAsUser == 0
+        }
+
+        pod_runs_as_nonroot {
+            input.review.object.spec.securityContext.runAsNonRoot
+        }
+
+        input_containers[c] {
+            c := input.review.object.spec.containers[_]
+        }
+
+        input_containers[c] {
+            c := input.review.object.spec.initContainers[_]
+        }
+
+        input_containers[c] {
+            c := input.review.object.spec.ephemeralContainers[_]
+        }
