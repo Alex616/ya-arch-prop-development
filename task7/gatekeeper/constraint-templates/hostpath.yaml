@@ -1,0 +1,49 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8spsphostfilesystem
+  annotations:
+    description: "Запрещает использование hostPath volumes"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPSPHostFilesystem
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            allowedHostPaths:
+              description: "Список разрешенных hostPath (обычно пуст)"
+              type: array
+              items:
+                type: object
+                properties:
+                  pathPrefix:
+                    type: string
+                  readOnly:
+                    type: boolean
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spsphostfilesystem
+
+        violation[{"msg": msg, "details": {}}] {
+            volume := input_hostpath_volumes[_]
+            not input_hostpath_allowed(volume)
+            msg := sprintf("Использование hostPath запрещено: %v", [volume.name])
+        }
+
+        input_hostpath_volumes[v] {
+            v := input.review.object.spec.volumes[_]
+            has_field(v, "hostPath")
+        }
+
+        input_hostpath_allowed(volume) {
+            allowedPaths := object.get(input, ["parameters", "allowedHostPaths"], [])
+            allowedPaths[_].pathPrefix == volume.hostPath.path
+        }
+
+        has_field(obj, field) {
+            obj[field]
+        }
